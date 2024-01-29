@@ -8,7 +8,7 @@ pipeline {
             gitCheckout{
                 branch: "main",
                 url: "https://github.com/shivalikasisodia/maven-build-eks.git"
-                    }
+            }
             }
         }
     }
