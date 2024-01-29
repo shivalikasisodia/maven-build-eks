@@ -4,7 +4,7 @@ pipeline {
     stages{
         stage('Git checkout'){
             steps{
-            gitCheckout{
+            ggitCheckout{
                 branch: "main",
                 url: "https://github.com/shivalikasisodia/maven-build-eks.git"
             }
