@@ -2,12 +2,14 @@
 pipeline {
     agent any
     stages{
-        stage('Git checkout'){
+         
+        stage('Git Checkout'){
+                    
             steps{
-            ggitCheckout{
+            gitCheckout(
                 branch: "main",
                 url: "https://github.com/shivalikasisodia/maven-build-eks.git"
-            }
+            )
             }
         }
     }
