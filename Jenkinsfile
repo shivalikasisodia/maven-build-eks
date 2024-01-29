@@ -14,10 +14,22 @@ pipeline{
             )
             }
         }
-        stage('Integration Test maven'){
-           steps{
-              script{ 
-                  mvnIntegrationTest()
+         stage('Unit Test maven'){
+         
+         when { expression {  params.action == 'create' } }
+
+            steps{
+               script{
+                   
+                   mvnTest()
+               }
+            }
+        }
+         stage('Integration Test maven'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{ 
+                   mvnIntegrationTest()
                }
             }
         }
