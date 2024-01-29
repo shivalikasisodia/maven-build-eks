@@ -8,7 +8,7 @@ pipeline {
                 script{
                     gitCheckout{
                         branch: "master",
-                        url: "https://github.com/shivalikasisodia/maven-build-eks.git"
+                        url: "https://github.com/shivalikasisodia/jenkins_shared_lib.git"
                     }
                 }
             }
