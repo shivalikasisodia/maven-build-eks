@@ -6,7 +6,7 @@ pipeline {
         stage('Git checkout'){
             steps{
             gitCheckout{
-                branch: "master",
+                branch: "main",
                 url: "https://github.com/shivalikasisodia/maven-build-eks.git"
                     }
             }
