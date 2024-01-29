@@ -1,3 +1,5 @@
+@Library('my-share-libraries')
+
 pipeline {
     agent any
     stages{
