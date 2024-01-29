@@ -1,6 +1,8 @@
 @Library('my-shared-library') _
-pipeline {
+pipeline{
+
     agent any
+
     stages{
          
         stage('Git Checkout'){
@@ -13,15 +15,20 @@ pipeline {
             }
         }
          stage('Unit Test maven'){
+         
+         
             steps{
-               script{  
+               script{
+                   
                    mvnTest()
                }
             }
         }
          stage('Integration Test maven'){
+         
             steps{
                script{
+                   
                    mvnIntegrationTest()
                }
             }
