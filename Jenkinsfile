@@ -7,7 +7,6 @@ pipeline {
             steps{
                 script{
                     gitCheckout{
-                        branch: "master",
                         url: "https://github.com/shivalikasisodia/jenkins_shared_lib.git"
                     }
                 }
