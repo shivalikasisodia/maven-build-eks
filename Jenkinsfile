@@ -4,7 +4,10 @@ pipeline {
         stage('Git checkout'){
             steps{
                 script{
-                    git 'https://github.com/shivalikasisodia/maven-build-eks.git'
+                    gitCheckout{
+                        branch: "master",
+                        url: "https://github.com/shivalikasisodia/maven-build-eks.git"
+                    }
                 }
             }
         }
