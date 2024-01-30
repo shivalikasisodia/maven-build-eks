@@ -1,20 +1,20 @@
 @Library('my-shared-library') _
+pipeline{
 
-pipeline {
     agent any
+
     stages{
-        stage('Git checkout'){
+         
+        stage('Git Checkout'){
+                    
             steps{
-            gitCheckout{
-                branch: "master",
+            gitCheckout(
+                branch: "main",
                 url: "https://github.com/shivalikasisodia/maven-build-eks.git"
-                    }
+            )
             }
         }
          stage('Unit Test maven'){
-         
-         
-
             steps{
                script{
                    
@@ -25,11 +25,11 @@ pipeline {
          stage('Integration Test maven'){
          
             steps{
-               script{
-                   
+               script{ 
                    mvnIntegrationTest()
                }
             }
         }
+
     }
 }
