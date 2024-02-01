@@ -74,11 +74,11 @@ pipeline{
             steps{
                script{
                    
-                   mvnBuild()
+                   mavenBuild()
                }
             }
         }
-        stage('Docker Image Build : ECR'){
+        stage('Image Build : ECR'){
          when { expression {  params.action == 'create' } }
             steps{
                script{
