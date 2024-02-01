@@ -20,41 +20,41 @@ pipeline{
             )
             }
         }
-        //  stage('Unit Test maven'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+         stage('Unit Test maven'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            mvnTest()
-        //        }
-        //     }
-        // }
-        //  stage('Integration Test maven'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{ 
-        //            mvnIntegrationTest()
-        //        }
-        //     }
-        // }
-        //  stage('Static Code Analysis: Sonarqube'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{ 
-        //            def SonarQubeCredentialsId = 'sonarqube-api'
-        //            staticCodeAnalysis(SonarQubeCredentialsId)
-        //        }
-        //     }
-        // }
-        //  stage('Quality Gate Status: Sonarqube'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{ 
-        //            def SonarQubeCredentialsId = 'sonarqube-api'
-        //            QualityGateStatus(SonarQubeCredentialsId)
-        //        }
-        //     }
-        // }
+                   mvnTest()
+               }
+            }
+        }
+         stage('Integration Test maven'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{ 
+                   mvnIntegrationTest()
+               }
+            }
+        }
+         stage('Static Code Analysis: Sonarqube'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{ 
+                   def SonarQubeCredentialsId = 'sonarqube-api'
+                   staticCodeAnalysis(SonarQubeCredentialsId)
+               }
+            }
+        }
+         stage('Quality Gate Status: Sonarqube'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{ 
+                   def SonarQubeCredentialsId = 'sonarqube-api'
+                   QualityGateStatus(SonarQubeCredentialsId)
+               }
+            }
+        }
          stage('Maven build: maven'){
          when { expression {  params.action == 'create' } }
             steps{
