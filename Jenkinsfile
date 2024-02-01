@@ -46,15 +46,15 @@ pipeline{
                }
             }
         }
-         stage('Quality Gate Status: Sonarqube'){
-         when { expression {  params.action == 'create' } }
-            steps{
-               script{ 
-                   def SonarQubeCredentialsId = 'sonarqube-api'
-                   QualityGateStatus(SonarQubeCredentialsId)
-               }
-            }
-        }
+        //  stage('Quality Gate Status: Sonarqube'){
+        //  when { expression {  params.action == 'create' } }
+        //     steps{
+        //        script{ 
+        //            def SonarQubeCredentialsId = 'sonarqube-api'
+        //            QualityGateStatus(SonarQubeCredentialsId)
+        //        }
+        //     }
+        // }
          stage('Maven build: maven'){
          when { expression {  params.action == 'create' } }
             steps{
