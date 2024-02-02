@@ -21,73 +21,73 @@ pipeline{
 
     stages{
          
-        // stage('Git Checkout'){
-        //             when { expression {  params.action == 'create' } }
-        //     steps{
-        //     gitCheckout(
-        //         branch: "main",
-        //         url: "https://github.com/shivalikasisodia/maven-build-eks.git"
-        //     )
-        //     }
-        // }
-        //  stage('Unit Test maven'){
+        stage('Git Checkout'){
+                    when { expression {  params.action == 'create' } }
+            steps{
+            gitCheckout(
+                branch: "main",
+                url: "https://github.com/shivalikasisodia/maven-build-eks.git"
+            )
+            }
+        }
+         stage('Unit Test maven'){
          
-        //  when { expression {  params.action == 'create' } }
+         when { expression {  params.action == 'create' } }
 
-        //     steps{
-        //        script{
+            steps{
+               script{
                    
-        //            mvnTest()
-        //        }
-        //     }
-        // }
-        //  stage('Integration Test maven'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+                   mvnTest()
+               }
+            }
+        }
+         stage('Integration Test maven'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            mvnIntegrationTest()
-        //        }
-        //     }
-        // }
-        // stage('Static code analysis: Sonarqube'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+                   mvnIntegrationTest()
+               }
+            }
+        }
+        stage('Static code analysis: Sonarqube'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            def SonarQubecredentialsId = 'sonarqube-api'
-        //            statiCodeAnalysis(SonarQubecredentialsId)
-        //        }
-        //     }
-        // }
-        // stage('Quality Gate Status Check : Sonarqube'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+                   def SonarQubecredentialsId = 'sonarqube-api'
+                   statiCodeAnalysis(SonarQubecredentialsId)
+               }
+            }
+        }
+        stage('Quality Gate Status Check : Sonarqube'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            def SonarQubecredentialsId = 'sonarqube-api'
-        //            QualityGateStatus(SonarQubecredentialsId)
-        //        }
-        //     }
-        // }
-        // stage('Maven Build : maven'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+                   def SonarQubecredentialsId = 'sonarqube-api'
+                   QualityGateStatus(SonarQubecredentialsId)
+               }
+            }
+        }
+        stage('Maven Build : maven'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            mavenBuild()
-        //        }
-        //     }
-        // }
-        // stage('Image Build : ECR'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+                   mavenBuild()
+               }
+            }
+        }
+        stage('Image Build : ECR'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            dockerBuild("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
-        //        }
-        //     }
-        // }
+                   dockerBuild("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
+               }
+            }
+        }
     // stage('Docker Image Scan: trivy '){
     //      when { expression {  params.action == 'create' } }
     //         steps{
@@ -96,37 +96,37 @@ pipeline{
     //                dockerImageScan("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
     //            }
     //         }
-    // //     }
-    //     stage('AWS Configure'){
-    //      when { expression {  params.action == 'create' } }
-    //         steps{   
-    //             withCredentials([[
-    //               $class: 'AmazonWebServicesCredentialsBinding',
-    //               credentialsId: 'aws-auth',
-    //               accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-    //               secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-    //                 sh "aws ec2 describe-instances --${params.Region}"
-    //            }
-    //         }
-    //    }   
-    //     stage('Docker Image Push : ECR '){
-    //      when { expression {  params.action == 'create' } }
-    //         steps{
-    //            script{
+    //     }
+        stage('AWS Configure'){
+         when { expression {  params.action == 'create' } }
+            steps{   
+                withCredentials([[
+                  $class: 'AmazonWebServicesCredentialsBinding',
+                  credentialsId: 'aws-auth',
+                  accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                  secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    sh "aws ec2 describe-instances --${params.Region}"
+               }
+            }
+       }   
+        stage('Docker Image Push : ECR '){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-    //                dockerImagePush("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
-    //            }
-    //         }
-    //    }   
-    //     stage('Docker Image Cleanup : ECR '){
-    //      when { expression {  params.action == 'create' } }
-    //         steps{
-    //            script{
+                   dockerImagePush("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
+               }
+            }
+       }   
+        stage('Docker Image Cleanup : ECR '){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-    //                dockerImageCleanup("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
-    //            }
-    //         }
-    //     } 
+                   dockerImageCleanup("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
+               }
+            }
+        } 
         // stage('Create EKS Cluster : Terraform'){
         //     when { expression {  params.action == 'create' } }
         //     steps{
@@ -143,21 +143,21 @@ pipeline{
         //         }
         //     }
         // }
-        // stage('Connect to EKS '){
-        //     when { expression {  params.action == 'create' } }
-        // steps{
+        stage('Connect to EKS '){
+            when { expression {  params.action == 'create' } }
+        steps{
 
-        //     script{
+            script{
 
-        //         sh """
-        //         aws configure set aws_access_key_id "$ACCESS_KEY"
-        //         aws configure set aws_secret_access_key "$SECRET_KEY"
-        //         aws configure set region "${params.Region}"
-        //         aws eks --region ${params.Region} update-kubeconfig --name ${params.cluster}
-        //         """
-        //     }
-        // }
-        // } 
+                sh """
+                aws configure set aws_access_key_id "$ACCESS_KEY"
+                aws configure set aws_secret_access_key "$SECRET_KEY"
+                aws configure set region "${params.Region}"
+                aws eks --region ${params.Region} update-kubeconfig --name ${params.cluster}
+                """
+            }
+        }
+        } 
         stage('Deployment on EKS Cluster'){
             when { expression {  params.action == 'create' } }
             steps{
