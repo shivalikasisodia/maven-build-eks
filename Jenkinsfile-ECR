@@ -21,15 +21,15 @@ pipeline{
 
     stages{
          
-        // stage('Git Checkout'){
-        //             when { expression {  params.action == 'create' } }
-        //     steps{
-        //     gitCheckout(
-        //         branch: "main",
-        //         url: "https://github.com/shivalikasisodia/maven-build-eks.git"
-        //     )
-        //     }
-        // }
+        stage('Git Checkout'){
+                    when { expression {  params.action == 'delete' } }
+            steps{
+            gitCheckout(
+                branch: "main",
+                url: "https://github.com/shivalikasisodia/maven-build-eks.git"
+            )
+            }
+        }
         //  stage('Unit Test maven'){
          
         //  when { expression {  params.action == 'create' } }
@@ -98,7 +98,7 @@ pipeline{
     //         }
     //     }
         stage('AWS Configure'){
-         when { expression {  params.action == 'create' } }
+         when { expression {  params.action == 'delete' } }
             steps{   
                 withCredentials([[
                   $class: 'AmazonWebServicesCredentialsBinding',
@@ -143,43 +143,59 @@ pipeline{
         //         }
         //     }
         // }
-        stage('Connect to EKS '){
-            when { expression {  params.action == 'create' } }
-        steps{
 
-            script{
-
-                sh """
-                aws configure set aws_access_key_id "$ACCESS_KEY"
-                aws configure set aws_secret_access_key "$SECRET_KEY"
-                aws configure set region "${params.Region}"
-                aws eks --region ${params.Region} update-kubeconfig --name ${params.cluster}
-                """
-            }
-        }
-        } 
-        stage('Deployment on EKS Cluster'){
-            when { expression {  params.action == 'create' } }
+        stage('Delete EKS Cluster : Terraform'){
+            when { expression {  params.action == 'delete' } }
             steps{
                 script{
-                  
-                  def apply = false
 
-                  try{
-                    input message: 'please confirm to deploy on eks', ok: 'Ready to apply the config ?'
-                    apply = true
-                  }catch(err){
-                    apply= false
-                    currentBuild.result  = 'UNSTABLE'
-                  }
-                  if(apply){
-
-                    sh """
-                      kubectl destroy -f .
-                    """
+                    dir('eks_module') {
+                      sh """
+                          
+                          terraform init 
+                          terraform destroy -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars --auto-approve
+                      """
                   }
                 }
             }
-        }    
+        }
+        // stage('Connect to EKS '){
+        //     when { expression {  params.action == 'create' } }
+        // steps{
+
+        //     script{
+
+        //         sh """
+        //         aws configure set aws_access_key_id "$ACCESS_KEY"
+        //         aws configure set aws_secret_access_key "$SECRET_KEY"
+        //         aws configure set region "${params.Region}"
+        //         aws eks --region ${params.Region} update-kubeconfig --name ${params.cluster}
+        //         """
+        //     }
+        // }
+        // } 
+//         stage('Deployment on EKS Cluster'){
+//             when { expression {  params.action == 'create' } }
+//             steps{
+//                 script{
+                  
+//                   def apply = false
+
+//                   try{
+//                     input message: 'please confirm to deploy on eks', ok: 'Ready to apply the config ?'
+//                     apply = true
+//                   }catch(err){
+//                     apply= false
+//                     currentBuild.result  = 'UNSTABLE'
+//                   }
+//                   if(apply){
+
+//                     sh """
+//                       kubectl apply -f .
+//                     """
+//                   }
+//                 }
+//             }
+//         }    
     }
 }
