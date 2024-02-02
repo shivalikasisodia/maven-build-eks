@@ -22,7 +22,7 @@ pipeline{
     stages{
          
         stage('Git Checkout'){
-                    when { expression {  params.action == 'delete' } }
+                    when { expression {  params.action == 'create' } }
             steps{
             gitCheckout(
                 branch: "main",
@@ -98,7 +98,7 @@ pipeline{
     //         }
     //     }
         stage('AWS Configure'){
-         when { expression {  params.action == 'delete' } }
+         when { expression {  params.action == 'create' } }
             steps{   
                 withCredentials([[
                   $class: 'AmazonWebServicesCredentialsBinding',
@@ -145,7 +145,7 @@ pipeline{
         // }
 
         stage('Delete EKS Cluster : Terraform'){
-            when { expression {  params.action == 'delete' } }
+            when { expression {  params.action == 'create' } }
             steps{
                 script{
 
@@ -153,7 +153,7 @@ pipeline{
                       sh """
                           
                           terraform init 
-                          terraform force-unlock 81ebe3a9-132e-98bc-b6b7-a809420e6e4c
+                          terraform plan -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars
                           terraform destroy -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars --auto-approve
                       """
                   }
