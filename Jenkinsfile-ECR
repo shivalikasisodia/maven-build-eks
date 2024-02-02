@@ -153,6 +153,7 @@ pipeline{
                       sh """
                           
                           terraform init 
+                          terraform force-unlock 81ebe3a9-132e-98bc-b6b7-a809420e6e4c
                           terraform destroy -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars --auto-approve
                       """
                   }
