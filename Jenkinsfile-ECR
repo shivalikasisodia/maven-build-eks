@@ -30,73 +30,73 @@ pipeline{
             )
             }
         }
-        //  stage('Unit Test maven'){
+         stage('Unit Test maven'){
          
-        //  when { expression {  params.action == 'create' } }
+         when { expression {  params.action == 'create' } }
 
-        //     steps{
-        //        script{
+            steps{
+               script{
                    
-        //            mvnTest()
-        //        }
-        //     }
-        // }
-        //  stage('Integration Test maven'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+                   mvnTest()
+               }
+            }
+        }
+         stage('Integration Test maven'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            mvnIntegrationTest()
-        //        }
-        //     }
-        // }
-        // stage('Static code analysis: Sonarqube'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+                   mvnIntegrationTest()
+               }
+            }
+        }
+        stage('Static code analysis: Sonarqube'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            def SonarQubecredentialsId = 'sonarqube-api'
-        //            statiCodeAnalysis(SonarQubecredentialsId)
-        //        }
-        //     }
-        // }
-        // stage('Quality Gate Status Check : Sonarqube'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+                   def SonarQubecredentialsId = 'sonarqube-api'
+                   statiCodeAnalysis(SonarQubecredentialsId)
+               }
+            }
+        }
+        stage('Quality Gate Status Check : Sonarqube'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            def SonarQubecredentialsId = 'sonarqube-api'
-        //            QualityGateStatus(SonarQubecredentialsId)
-        //        }
-        //     }
-        // }
-        // stage('Maven Build : maven'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+                   def SonarQubecredentialsId = 'sonarqube-api'
+                   QualityGateStatus(SonarQubecredentialsId)
+               }
+            }
+        }
+        stage('Maven Build : maven'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            mavenBuild()
-        //        }
-        //     }
-        // }
-        // stage('Image Build : ECR'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+                   mavenBuild()
+               }
+            }
+        }
+        stage('Image Build : ECR'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            dockerBuild("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
-        //        }
-        //     }
-        // }
-    // stage('Docker Image Scan: trivy '){
-    //      when { expression {  params.action == 'create' } }
-    //         steps{
-    //            script{
+                   dockerBuild("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
+               }
+            }
+        }
+    stage('Docker Image Scan: trivy '){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-    //                dockerImageScan("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
-    //            }
-    //         }
-    //     }
+                   dockerImageScan("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
+               }
+            }
+        }
         stage('AWS Configure'){
          when { expression {  params.action == 'create' } }
             steps{   
@@ -109,40 +109,40 @@ pipeline{
                   }
             }
        }   
-      //   stage('Docker Image Push : ECR '){
-      //    when { expression {  params.action == 'create' } }
-      //       steps{
-      //          script{
+        stage('Docker Image Push : ECR '){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-      //              dockerImagePush("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
-      //          }
-      //       }
-      //  }   
-      //   stage('Docker Image Cleanup : ECR '){
-      //    when { expression {  params.action == 'create' } }
-      //       steps{
-      //          script{
+                   dockerImagePush("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
+               }
+            }
+       }   
+        stage('Docker Image Cleanup : ECR '){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-      //              dockerImageCleanup("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
-      //          }
-      //       }
-      //   } 
-        // stage('Create EKS Cluster : Terraform'){
-        //     when { expression {  params.action == 'create' } }
-        //     steps{
-        //         script{
+                   dockerImageCleanup("${params.aws_account_id}","${params.Region}","${params.ECR_REPO_NAME}")
+               }
+            }
+        } 
+        stage('Create EKS Cluster : Terraform'){
+            when { expression {  params.action == 'create' } }
+            steps{
+                script{
 
-        //             dir('eks_module') {
-        //               sh """
+                    dir('eks_module') {
+                      sh """
                           
-        //                   terraform init 
-        //                   terraform plan -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars
-        //                   terraform apply -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars --auto-approve
-        //               """
-        //           }
-        //         }
-        //     }
-        // }
+                          terraform init 
+                          terraform plan -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars
+                          terraform apply -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars --auto-approve
+                      """
+                  }
+                }
+            }
+        }
 
         stage('Delete EKS Cluster : Terraform'){
             when { expression {  params.action == 'create' } }
@@ -160,43 +160,43 @@ pipeline{
                 }
             }
         }
-        // stage('Connect to EKS '){
-        //     when { expression {  params.action == 'create' } }
-        // steps{
+        stage('Connect to EKS '){
+            when { expression {  params.action == 'create' } }
+        steps{
 
-        //     script{
+            script{
 
-        //         sh """
-        //         aws configure set aws_access_key_id "$ACCESS_KEY"
-        //         aws configure set aws_secret_access_key "$SECRET_KEY"
-        //         aws configure set region "${params.Region}"
-        //         aws eks --region ${params.Region} update-kubeconfig --name ${params.cluster}
-        //         """
-        //     }
-        // }
-        // } 
-//         stage('Deployment on EKS Cluster'){
-//             when { expression {  params.action == 'create' } }
-//             steps{
-//                 script{
+                sh """
+                aws configure set aws_access_key_id "$ACCESS_KEY"
+                aws configure set aws_secret_access_key "$SECRET_KEY"
+                aws configure set region "${params.Region}"
+                aws eks --region ${params.Region} update-kubeconfig --name ${params.cluster}
+                """
+            }
+        }
+        } 
+        stage('Deployment on EKS Cluster'){
+            when { expression {  params.action == 'create' } }
+            steps{
+                script{
                   
-//                   def apply = false
+                  def apply = false
 
-//                   try{
-//                     input message: 'please confirm to deploy on eks', ok: 'Ready to apply the config ?'
-//                     apply = true
-//                   }catch(err){
-//                     apply= false
-//                     currentBuild.result  = 'UNSTABLE'
-//                   }
-//                   if(apply){
+                  try{
+                    input message: 'please confirm to deploy on eks', ok: 'Ready to apply the config ?'
+                    apply = true
+                  }catch(err){
+                    apply= false
+                    currentBuild.result  = 'UNSTABLE'
+                  }
+                  if(apply){
 
-//                     sh """
-//                       kubectl apply -f .
-//                     """
-//                   }
-//                 }
-//             }
-//         }    
+                    sh """
+                      kubectl apply -f .
+                    """
+                  }
+                }
+            }
+        }    
     }
 }
