@@ -144,22 +144,6 @@ pipeline{
             }
         }
 
-        stage('Delete EKS Cluster : Terraform'){
-            when { expression {  params.action == 'create' } }
-            steps{
-                script{
-
-                    dir('eks_module') {
-                      sh """
-                          
-                          terraform init 
-                          terraform plan -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars
-                          terraform destroy -var 'access_key=$ACCESS_KEY' -var 'secret_key=$SECRET_KEY' -var 'region=${params.Region}' --var-file=./config/terraform.tfvars --auto-approve
-                      """
-                  }
-                }
-            }
-        }
         stage('Connect to EKS '){
             when { expression {  params.action == 'create' } }
         steps{
