@@ -9,6 +9,12 @@ pipeline{
         string(name: 'ImageTag', description: "tag of the docker build", defaultValue: 'v1')
         string(name: 'DockerHubUser', description: "name of the Application", defaultValue: 'shivisis')
     }
+    environment{
+
+        ACCESS_KEY = credentials('AWS_ACCESS_KEY_ID')
+        SECRET_KEY = credentials('AWS_SECRET_KEY_ID')
+        AWS_CRED = credentials('aws-auth')
+    }
     stages{
         
         stage('Git Checkout'){
@@ -46,15 +52,15 @@ pipeline{
                }
             }
         }
-        //  stage('Quality Gate Status: Sonarqube'){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{ 
-        //            def SonarQubeCredentialsId = 'sonarqube-api'
-        //            QualityGateStatus(SonarQubeCredentialsId)
-        //        }
-        //     }
-        // }
+         stage('Quality Gate Status: Sonarqube'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{ 
+                   def SonarQubeCredentialsId = 'sonarqube-api'
+                   QualityGateStatus(SonarQubeCredentialsId)
+               }
+            }
+        }
          stage('Maven build: maven'){
          when { expression {  params.action == 'create' } }
             steps{
@@ -71,15 +77,15 @@ pipeline{
                }
             }
         }
-        //  stage('Docker Image Scan: trivy '){
-        //  when { expression {  params.action == 'create' } }
-        //     steps{
-        //        script{
+         stage('Docker Image Scan: trivy '){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
                    
-        //            dockerImageScan("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
-        //        }
-        //     }
-        // }
+                   dockerImageScan("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
+               }
+            }
+        }
          stage('Docker Image Push : DockerHub '){
          when { expression {  params.action == 'create' } }
             steps{
@@ -98,6 +104,18 @@ pipeline{
                }
             }
         } 
+        stage('AWS Configure'){
+         when { expression {  params.action == 'create' } }
+            steps{   
+                withCredentials([[
+                  $class: 'AmazonWebServicesCredentialsBinding',
+                  credentialsId: 'aws-auth',
+                  accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                  secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    sh "aws ec2 describe-instances --region ${params.Region}"
+                  }
+            }
+       }   
          stage('Create EKS Cluster : Terraform'){
             when { expression {  params.action == 'create' } }
             steps{
@@ -129,29 +147,29 @@ pipeline{
             }
         }
         } 
-        // stage('Deployment on EKS Cluster'){
-        //     when { expression {  params.action == 'create' } }
-        //     steps{
-        //         script{
+        stage('Deployment on EKS Cluster'){
+            when { expression {  params.action == 'create' } }
+            steps{
+                script{
                   
-        //           def apply = false
+                  def apply = false
 
-        //           try{
-        //             input message: 'please confirm to deploy on eks', ok: 'Ready to apply the config ?'
-        //             apply = true
-        //           }catch(err){
-        //             apply= false
-        //             currentBuild.result  = 'UNSTABLE'
-        //           }
-        //           if(apply){
+                  try{
+                    input message: 'please confirm to deploy on eks', ok: 'Ready to apply the config ?'
+                    apply = true
+                  }catch(err){
+                    apply= false
+                    currentBuild.result  = 'UNSTABLE'
+                  }
+                  if(apply){
 
-        //             sh """
-        //               kubectl apply -f .
-        //             """
-        //           }
-        //         }
-        //     }
-        // }    
+                    sh """
+                      kubectl apply -f .
+                    """
+                  }
+                }
+            }
+        }    
     }
 }     
 
